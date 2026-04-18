@@ -180,7 +180,7 @@
   <div class="header">
     <div>
       <h1>🪙 WDD Dashboard</h1>
-      <div class="updated">最后更新: <span id="updated-time">2026-04-18 05:25 UTC</span></div>
+      <div class="updated">最后更新: <span id="updated-time">2026-04-18 05:26 UTC</span></div>
     </div>
     <button class="refresh-btn" onclick="fetchData()">🔄 刷新</button>
   </div>
@@ -191,7 +191,7 @@
     <div class="token-info">
       <div class="card price-card">
         <div class="label">价格 (USD)</div>
-        <div class="value">$0.00199580</div>
+        <div class="value">$0.00201085</div>
         <div class="sub">what the dog doing? 我的刀盾</div>
       </div>
     </div>
@@ -202,11 +202,11 @@
       </div>
       <div class="card">
         <div class="label">24h 成交量</div>
-        <div class="value">$1.10M</div>
+        <div class="value">$1.08M</div>
       </div>
       <div class="card">
         <div class="label">流动性池</div>
-        <div class="value">190987.7621</div>
+        <div class="value">191265.2262</div>
       </div>
     </div>
 
@@ -216,7 +216,7 @@
       <div class="sentiment-header">
         <div class="gauge-wrap">
           <div class="gauge-bg">
-            <div class="gauge-fill" style="width: 67.064696485623%; background: #22c55e;"></div>
+            <div class="gauge-fill" style="width: 67.76706827309236%; background: #22c55e;"></div>
           </div>
           <div class="gauge-labels"><span>0 恐慌</span><span>100 FOMO</span></div>
         </div>
@@ -232,7 +232,7 @@
       <div class="indicator-card">
         <div class="ind-label">买卖压力比</div>
         <div class="ind-value" style="color: #22c55e;">
-          1.68x
+          1.71x
         </div>
       </div>
       <div class="indicator-card">
@@ -251,27 +251,27 @@
       <div class="pc-grid">
         <div class="pc-item">
           <div class="period">5分钟</div>
-          <div class="pct" style="color: #22c55e;">+0.457%</div>
+          <div class="pct" style="color: #6b7280;">0.000%</div>
         </div>
         <div class="pc-item">
           <div class="period">15分钟</div>
-          <div class="pct" style="color: #22c55e;">+1.852%</div>
+          <div class="pct" style="color: #22c55e;">+0.250%</div>
         </div>
         <div class="pc-item">
           <div class="period">30分钟</div>
-          <div class="pct" style="color: #ef4444;">-1.591%</div>
+          <div class="pct" style="color: #22c55e;">+2.646%</div>
         </div>
         <div class="pc-item">
           <div class="period">1小时</div>
-          <div class="pct" style="color: #ef4444;">-5.590%</div>
+          <div class="pct" style="color: #ef4444;">-4.878%</div>
         </div>
         <div class="pc-item">
           <div class="period">6小时</div>
-          <div class="pct" style="color: #ef4444;">-8.381%</div>
+          <div class="pct" style="color: #ef4444;">-8.174%</div>
         </div>
         <div class="pc-item">
           <div class="period">24小时</div>
-          <div class="pct" style="color: #ef4444;">-21.340%</div>
+          <div class="pct" style="color: #ef4444;">-19.426%</div>
         </div>
       </div>
     </div>
@@ -282,16 +282,16 @@
       <div class="tx-grid">
         <div class="tx-box">
           <div class="tx-label">1小时买入</div>
-          <div class="tx-value" style="color:#22c55e;">54</div>
+          <div class="tx-value" style="color:#22c55e;">56</div>
           <div class="tx-label" style="margin-top:8px;">1小时卖出</div>
           <div class="tx-value" style="color:#ef4444;">24</div>
-          <div class="tx-ratio">买家 34 | 卖家 17</div>
+          <div class="tx-ratio">买家 35 | 卖家 17</div>
         </div>
         <div class="tx-box">
           <div class="tx-label">24小时买入</div>
-          <div class="tx-value" style="color:#22c55e;">1633</div>
+          <div class="tx-value" style="color:#22c55e;">1613</div>
           <div class="tx-label" style="margin-top:8px;">24小时卖出</div>
-          <div class="tx-value" style="color:#ef4444;">1252</div>
+          <div class="tx-value" style="color:#ef4444;">1245</div>
           <div class="tx-ratio">买卖比 1.30x</div>
         </div>
       </div>
@@ -303,7 +303,7 @@
       <div class="liq-grid">
         <div class="liq-item">
           <div class="liq-label">池子规模</div>
-          <div class="liq-value">190987.7621</div>
+          <div class="liq-value">191265.2262</div>
         </div>
         <div class="liq-item">
           <div class="liq-label">市值/流动性比</div>
@@ -329,12 +329,18 @@ async function fetchData() {
   loading = true;
   document.getElementById('app').innerHTML = '<div class="loading">加载中...</div>';
   try {
-    const resp = await fetch('/api/data');
-    const html = await resp.text();
-    document.getElementById('app').innerHTML = html;
-    document.getElementById('updated-time').textContent = new Date().toLocaleString('zh-CN', {timeZone: 'UTC'}) + ' UTC';
+    // Try local server first (works on local network)
+    const resp = await fetch('http://172.19.6.121:8050/api/data');
+    if (resp.ok) {
+      const html = await resp.text();
+      document.getElementById('app').innerHTML = html;
+      document.getElementById('updated-time').textContent = new Date().toLocaleString('zh-CN', {timeZone: 'UTC'}) + ' UTC';
+    } else {
+      throw new Error('Local server unavailable');
+    }
   } catch (e) {
-    document.getElementById('app').innerHTML = '<div class="error">加载失败: ' + e.message + '</div>';
+    // Fallback: full page reload (works on GitHub Pages - static)
+    window.location.reload();
   }
   loading = false;
 }
