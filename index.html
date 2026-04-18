@@ -1,0 +1,219 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WDD Dashboard</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .header h1 { font-size: 24px; color: #f8fafc; }
+  .header .updated { font-size: 13px; color: #64748b; }
+  .header .refresh-btn {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #e2e8f0;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .refresh-btn:hover { background: #334155; }
+
+  .error {
+    background: #7f1d1d;
+    border: 1px solid #b91c1c;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    color: #fca5a5;
+  }
+
+  .token-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .card .label { font-size: 12px; color: #64748b; margin-bottom: 6px; text-transform: uppercase; }
+  .card .value { font-size: 22px; font-weight: 700; color: #f8fafc; }
+  .card .sub { font-size: 12px; color: #64748b; margin-top: 4px; }
+
+  .price-card {
+    grid-column: span 3;
+    text-align: center;
+  }
+  .price-card .value { font-size: 36px; }
+
+  /* Sentiment Gauge */
+  .sentiment-section {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 12px;
+  }
+  .sentiment-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .gauge-wrap { flex: 1; }
+  .gauge-bg {
+    height: 12px;
+    background: #334155;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+  .gauge-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.6s ease;
+  }
+  .gauge-labels { display: flex; justify-content: space-between; font-size: 11px; color: #64748b; margin-top: 6px; }
+  .sentiment-score { font-size: 56px; font-weight: 800; line-height: 1; }
+  .sentiment-label { font-size: 20px; font-weight: 600; margin-top: 4px; }
+
+  /* Indicators row */
+  .indicators {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .indicator-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+  .indicator-card .ind-label { font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 8px; }
+  .indicator-card .ind-value { font-size: 18px; font-weight: 700; }
+
+  /* Price changes */
+  .price-changes {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 12px;
+  }
+  .section-title { font-size: 13px; color: #64748b; text-transform: uppercase; margin-bottom: 14px; }
+  .pc-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+  }
+  .pc-item { text-align: center; }
+  .pc-item .period { font-size: 11px; color: #64748b; margin-bottom: 4px; }
+  .pc-item .pct { font-size: 15px; font-weight: 600; }
+
+  /* Transactions */
+  .transactions {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 12px;
+  }
+  .tx-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .tx-box {
+    background: #0f1117;
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+  .tx-box .tx-label { font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 8px; }
+  .tx-box .tx-value { font-size: 22px; font-weight: 700; }
+  .tx-box .tx-ratio { font-size: 12px; color: #64748b; margin-top: 4px; }
+
+  /* Liquidity */
+  .liquidity {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 12px;
+  }
+  .liq-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .liq-item { text-align: center; }
+  .liq-item .liq-label { font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 6px; }
+  .liq-item .liq-value { font-size: 18px; font-weight: 700; }
+
+  /* Loading skeleton */
+  .loading { text-align: center; padding: 60px; color: #64748b; }
+
+  @media (max-width: 600px) {
+    .token-info { grid-template-columns: 1fr; }
+    .price-card { grid-column: span 1; }
+    .pc-grid { grid-template-columns: repeat(3, 1fr); }
+    .indicators { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div>
+      <h1>🪙 WDD Dashboard</h1>
+      <div class="updated">最后更新: <span id="updated-time"></span></div>
+    </div>
+    <button class="refresh-btn" onclick="fetchData()">🔄 刷新</button>
+  </div>
+
+  <div id="app">
+    
+    <div class="error">
+      ⚠️ 数据获取失败<br><small>HTTP Error 404: Not Found</small>
+    </div>
+    
+  </div>
+</div>
+
+<script>
+let loading = false;
+
+async function fetchData() {
+  if (loading) return;
+  loading = true;
+  document.getElementById('app').innerHTML = '<div class="loading">加载中...</div>';
+  try {
+    const resp = await fetch('/api/data');
+    const html = await resp.text();
+    document.getElementById('app').innerHTML = html;
+    document.getElementById('updated-time').textContent = new Date().toLocaleString('zh-CN', {timeZone: 'UTC'}) + ' UTC';
+  } catch (e) {
+    document.getElementById('app').innerHTML = '<div class="error">加载失败: ' + e.message + '</div>';
+  }
+  loading = false;
+}
+
+// Auto-refresh every 5 minutes
+setInterval(fetchData, 5 * 60 * 1000);
+</script>
+</body>
+</html>
